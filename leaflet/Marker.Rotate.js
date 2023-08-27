@@ -1,7 +1,7 @@
 L.RotaitedMarker = L.Marker.extend({
 	options: {
 	  rotationAngle: 0,
-	  rotationOrigin: "",
+	  rotationOrigin: "center",
 	},
   
 	initialize: function (latlng, options) {
@@ -10,14 +10,7 @@ L.RotaitedMarker = L.Marker.extend({
 	  L.Util.setOptions(this, options);
 	  this._latlng = L.latLng(latlng);
   
-	  var iconOptions = this.options.icon && this.options.icon.options;
-	  var iconAnchor = iconOptions && this.options.icon.options.iconAnchor;
-	  if (iconAnchor) {
-		iconAnchor = iconAnchor[0] + "px " + iconAnchor[1] + "px";
-	  }
-  
-	  this.options.rotationOrigin =
-		this.options.rotationOrigin || iconAnchor || "center bottom";
+	  this.options.rotationOrigin = this.options.rotationOrigin || "center bottom";
 	  this.options.rotationAngle = this.options.rotationAngle || 0;
   
 	  // Ensure marker keeps rotated during dragging
@@ -41,7 +34,7 @@ L.RotaitedMarker = L.Marker.extend({
 		  this.options.rotationOrigin;
   
 		this._icon.style[L.DomUtil.TRANSFORM] +=
-		  " rotateZ(" + this.options.rotationAngle + "deg)";
+		  " rotate(" + this.options.rotationAngle + "deg)";
 	  }
 	},
   

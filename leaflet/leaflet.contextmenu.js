@@ -33,9 +33,9 @@ L.Map.ContextMenu = L.Handler.extend({
     statics: {
       CLS_CONTAINER: 'dropdown-menu',
       CLS_DISABLED: 'disabled',
-      CLS_TOGGLE: 'dropdown-toggle arrow-none',
+      CLS_TOGGLE: 'has-arrow',
       CLS_ELEMENT: 'dropdown',
-      CLS_INNER: 'dropdown-item',
+      CLS_INNER: 'dropdown-item ',
       CONTAINER: 'ul',
       ELEMENT: 'li',
       INNER: 'a',

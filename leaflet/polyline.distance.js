@@ -2,7 +2,6 @@
 //Maptorium plugin
 //------------------------------------------------------------------------------
 (function () {
-	var _old__setPos = L.Marker.prototype._setPos;
 	L.Polyline.include({
     distance: function(units) {
       let distance = 0;

@@ -11,6 +11,10 @@
         <!-- App favicon -->
         <link rel="shortcut icon" href="assets/images/favicon.ico">
 
+        <!-- color picker css -->
+        <link rel="stylesheet" href="assets/libs/%40simonwep/pickr/themes/classic.min.css"/> <!-- 'classic' theme -->
+        <link rel="stylesheet" href="assets/libs/%40simonwep/pickr/themes/monolith.min.css"/> <!-- 'monolith' theme -->
+        <link rel="stylesheet" href="assets/libs/%40simonwep/pickr/themes/nano.min.css"/> <!-- 'nano' theme -->
         <!-- leaflet Css -->
         <link href="assets/libs/leaflet/leaflet.css" rel="stylesheet" type="text/css" />
         <!-- alertifyjs Css -->
@@ -30,10 +34,20 @@
         <!--Maptorium CSS-->
         <link href="leaflet/easy-button.css" rel="stylesheet" type="text/css" />
         <link href="leaflet/L.Control.Bar.css" rel="stylesheet" type="text/css" />
+        <link href='leaflet/mapbox/mapbox-gl.css' rel='stylesheet' />
+        <style>
+            .custom-tooltip {
+                background-color: #ff0000;
+                color: #ffffff;
+                border: 1px solid #000000;
+                padding: 5px;
+                font-size: 12px;
+            }
+        </style>
 
     </head>
 
-    <body>
+    <body class="">
 
     <!-- <body data-layout="horizontal"> -->
 
@@ -134,57 +148,45 @@
                         </div>
 
                         <div class="dropdown d-none d-sm-inline-block">
-                            <button type="button" class="btn header-item" id="mode-setting-btn">
-                                <i data-feather="moon" class="icon-lg layout-mode-dark"></i>
-                                <i data-feather="sun" class="icon-lg layout-mode-light"></i>
+                            <button type="button" class="btn header-item noti-icon" id="mode-setting-btn">
+                                <i class="bx bx-moon icon-lg layout-mode-dark"></i>
+                                <i class="bx bx-sun icon-lg layout-mode-light"></i>
                             </button>
                         </div>
 
                         <div class="dropdown d-none d-lg-inline-block ms-1">
-                            <button type="button" class="btn header-item"
+                            <button type="button" class="btn header-item noti-icon"
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i data-feather="grid" class="icon-lg"></i>
+                                <i class="bx bx-grid-alt icon-lg"></i>
                             </button>
                             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                                 <div class="p-2">
                                     <div class="row g-0">
                                         <div class="col">
-                                            <a class="dropdown-icon-item" href="#">
+                                            <a class="dropdown-icon-item" href="https://github.com/gunyakov/maptorium-server">
                                                 <img src="assets/images/brands/github.png" alt="Github">
-                                                <span>GitHub</span>
+                                                <span>Server</span>
                                             </a>
                                         </div>
                                         <div class="col">
-                                            <a class="dropdown-icon-item" href="#">
-                                                <img src="assets/images/brands/bitbucket.png" alt="bitbucket">
-                                                <span>Bitbucket</span>
-                                            </a>
-                                        </div>
-                                        <div class="col">
-                                            <a class="dropdown-icon-item" href="#">
-                                                <img src="assets/images/brands/dribbble.png" alt="dribbble">
-                                                <span>Dribbble</span>
+                                            <a class="dropdown-icon-item" href="https://github.com/gunyakov/maptorium-ui">
+                                                <img src="assets/images/brands/github.png" alt="Github">
+                                                <span>UI-Core</span>
                                             </a>
                                         </div>
                                     </div>
 
                                     <div class="row g-0">
                                         <div class="col">
-                                            <a class="dropdown-icon-item" href="#">
-                                                <img src="assets/images/brands/dropbox.png" alt="dropbox">
-                                                <span>Dropbox</span>
+                                            <a class="dropdown-icon-item" href="https://github.com/gunyakov/maptorium-leaflet">
+                                                <img src="assets/images/brands/github.png" alt="Github">
+                                                <span>UI-Leaflet</span>
                                             </a>
                                         </div>
                                         <div class="col">
-                                            <a class="dropdown-icon-item" href="#">
-                                                <img src="assets/images/brands/mail_chimp.png" alt="mail_chimp">
-                                                <span>Mail Chimp</span>
-                                            </a>
-                                        </div>
-                                        <div class="col">
-                                            <a class="dropdown-icon-item" href="#">
-                                                <img src="assets/images/brands/slack.png" alt="slack">
-                                                <span>Slack</span>
+                                            <a class="dropdown-icon-item" href="https://github.com/gunyakov/maptorium-ui">
+                                                <img src="assets/images/brands/github.png" alt="Github">
+                                                <span>UI-Cesium</span>
                                             </a>
                                         </div>
                                     </div>
@@ -195,8 +197,8 @@
                         <div class="dropdown d-inline-block">
                             <button type="button" class="btn header-item noti-icon position-relative" id="page-header-notifications-dropdown"
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i data-feather="bell" class="icon-lg"></i>
-                                <span class="badge bg-danger rounded-pill">5</span>
+                                <i class='bx bx-bell icon-lg' ></i>
+                                <span class="badge bg-danger rounded-pill" data-m="messageCounter">5</span>
                             </button>
                             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
                                 aria-labelledby="page-header-notifications-dropdown">
@@ -210,17 +212,14 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div data-simplebar style="max-height: 230px;">
+                                <div data-simplebar style="max-height: 230px;" id="messageEl">
                                     <a href="#!" class="text-reset notification-item">
                                         <div class="d-flex">
-                                            <div class="flex-shrink-0 me-3">
-                                                <img src="assets/images/users/avatar-3.jpg" class="rounded-circle avatar-sm" alt="user-pic">
-                                            </div>
                                             <div class="flex-grow-1">
                                                 <h6 class="mb-1">James Lemire</h6>
                                                 <div class="font-size-13 text-muted">
-                                                    <p class="mb-1">It will seem like simplified English.</p>
-                                                    <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span>1 hour ago</span></p>
+                                                    <p class="mb-1" data-m="message">It will seem like simplified English.</p>
+                                                    <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span data-m="time">1 hour ago</span></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -281,13 +280,7 @@
                             </div>
                         </div>
 
-                        <div class="dropdown d-inline-block">
-                            <button type="button" class="btn header-item right-bar-toggle me-2">
-                                <i data-feather="settings" class="icon-lg"></i>
-                            </button>
-                        </div>
-
-                        <div class="dropdown d-inline-block">
+                        <!--<div class="dropdown d-inline-block">
                             <button type="button" class="btn header-item bg-soft-light border-start border-end" id="page-header-user-dropdown"
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg"
@@ -296,13 +289,13 @@
                                 <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
                             </button>
                             <div class="dropdown-menu dropdown-menu-end">
-                                <!-- item-->
+
                                 <a class="dropdown-item" href="apps-contacts-profile.html"><i class="mdi mdi-face-profile font-size-16 align-middle me-1"></i> Profile</a>
                                 <a class="dropdown-item" href="auth-lock-screen.html"><i class="mdi mdi-lock font-size-16 align-middle me-1"></i> Lock Screen</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="auth-logout.html"><i class="mdi mdi-logout font-size-16 align-middle me-1"></i> Logout</a>
                             </div>
-                        </div>
+                        </div>-->
 
                     </div>
                 </div>
@@ -351,23 +344,57 @@
                                 </ul>
                             </li>
                             <li>
-                                <a href="#" id="t-placemarks-manager">
+                                <a href="javascript: void(0);" class="has-arrow">
                                     <i class="mdi mdi-playlist-edit icon"></i>
-                                    <span data-key="t-plavemarks">Placemarks</span>
+                                          <span data-key="t-info">Info Panes</span>
                                 </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a class="dropdown-item right-bar-toggle" href="#" role="button" id="t-placemarks-manager">Placemarks</a></li>
+                                    <li><a class="dropdown-item" href="#" role="button" id="gps-info">GPS Info</a></li>
+                                    <li><a class="dropdown-item" href="#" role="button" id="job-manager-btn" >JOB Info</a></li>
+                                </ul>
                             </li>
 
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow">
-                                    <i class="mdi mdi-image-size-select-small icon"></i>
-                                    <span data-key="t-apps">Selection</span>
+                                    <i class="mdi mdi-drawing-box icon"></i>
+                                    <span data-key="t-apps">Draw Tools</span>
                                 </a>
                                 <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="#" id="b-select-tile">By tile grid</a></li>
-                                    <li><a href="#" data-key="t-select-rectangular">Rectangular</a></li>
-                                    <li><a href="#" data-key="t-select-coordinates">By Coordinates</a></li>
+                                    <li><a href="#" id="b-select-tile">Square by tile</a></li>
+                                    <li><a href="#" id="startDrawSquare">Rectangular</a></li>
+                                    <li><a href="#" id="startDrawPolygon">Polygon</a></li>
+                                    <li><a href="#" id="startDrawPolyline">Polyline</a></li>
                                 </ul>
                             </li>
+                            <li>
+                                <a class="has-arrow"" href="javascript: void(0);">
+                                  <i class="mdi mdi-view-grid-plus-outline icon"></i>
+                                  <span data-key="t-apps">View</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li>
+                                        <a href="javascript: void(0);" class="has-arrow"><i class="mdi mdi-view-grid-plus-outline icon"></i> <span>Tile Boundaries</span></a>
+                                        <ul class="sub-menu" aria-expanded="false">
+                                            <li><a href="javascript: void(0);" data-bs-toggle="modal" data-bs-target="#tileGridModal"><i class="mdi mdi-grid icon"></i> <span>Zoom Level</span></a></li>
+                                            <li><a href="javascript: void(0);" data-bs-toggle="modal" data-bs-target="#tileGridOffsetModal"><i class="mdi mdi-grid-large icon"></i> <span>Zoom Offset</span></a></li>
+                                            <li><hr style="width: 50%; color: #333333; margin-left: 25%"></li>
+                                            <li><a href="javascript: void(0);" onclick="setTileGrid(-1, -1)"><i class="mdi mdi-grid-off icon"></i> <span>Swith Off Grid</span></a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="javascript: void(0);" class="has-arrow"><i class="mdi mdi-file-image icon"></i> <span>Tile Cached map</span></a>
+                                        <ul class="sub-menu" aria-expanded="false">
+                                            <li><a href="javascript: void(0);" id="cachedMapZoom"><i class="mdi mdi-grid icon"></i> <span>Zoom Level</span></a></li>
+                                            <li><a href="javascript: void(0);" id="cachedMapOffset"><i class="mdi mdi-grid-large icon"></i> <span>Zoom Offset</span></a></li>
+                                            <li><hr style="width: 50%; color: #333333; margin-left: 25%"></li>
+                                            <li><a href="javascript: void(0);" id="cachedMapClean"><i class="mdi mdi-grid-off icon"></i> <span>Swith Off Tile Cached Map</span></a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                
+                            </li>
+
 
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow">
@@ -390,20 +417,21 @@
                                             <li><hr style="width: 50%; color: #333333; margin-left: 25%"></li>
                                             <li><a href="javascript: void(0);" data-bs-toggle="modal" data-bs-target="#newRouteModal">Start new route</a></li>
                                             <li><a href="javascript: void(0);" id="gps-sample-time">Sample time</a></li>
+                                            <li><a href="javascript: void(0);" id="gps-distance-to-go">Distance to Go</a></li>
                                         </ul>
                                     </li>
                                     <li>
                                         <a href="javascript: void(0);" class="has-arrow"><i class="mdi mdi-history icon"></i> <span>GPS History</span></a>
                                         <ul class="sub-menu" aria-expanded="true">
-                                            <li><a href="javascript: void(0);" data-key="gps-clear-history">Clear all routes</a></li>
+                                            <li><a href="javascript: void(0);" id="gps-clear-history">Clear all routes</a></li>
                                             <li><hr style="width: 50%; color: #333333; margin-left: 25%"></li>
                                             <div id="route-list"><li><a href="javascript: void(0);" data-key="gps-show-history" data-id="0">Empty</a></li></div>
 
                                         </ul>
                                     </li>
                                     <li><a href="javascript: void(0);" data-key="gps-follow-position"><i class="mdi mdi-satellite-uplink icon"></i><span>Follow GPS Position</span></a></li>
-                                    <li><a href="javascript: void(0);" data-key="gps-centered-map"><i class="mdi mdi-axis-arrow-lock icon"></i><span>GPS to center map</span></a></li>
-                                    <li><a href="javascript: void(0);" data-key="gps-add-placemark"><i class="mdi mdi-pin icon"></i><span>Add placemark</span></a></li>
+                                    <li><a href="javascript: void(0);" id="gps-centered-map"><i class="mdi mdi-axis-arrow-lock icon"></i><span>GPS to center map</span></a></li>
+                                    <li><a href="javascript: void(0);" data-bs-toggle="modal" data-bs-target="#markAddModal"><i class="mdi mdi-pin icon"></i><span>Add mark</span></a></li>
                                     <li><a href="javascript: void(0);" data-key="gps-options"><i class="mdi mdi-application-cog icon"></i><span>Options</span></a></li>
                                 </ul>
                             </li>
@@ -435,27 +463,108 @@
 
                 <div id="leaflet-map" class="leaflet-map">
                     <table id="bar"><tr><td id="mZ" style="width:18px">N/A</td><td id="mQueue" width="fit-content">&nbsp;Queue: 0&nbsp;</td><td id="mDownload" width="fit-content">&nbsp;Downloaded 0 (0,0kB) </td><td id='mLat' width="120px">Coords will be there</td><td id='mLon' width="120px">Coords will be there</td><td id='mLog'>Logs will be there</td></tr></table>
-                    <table id='routeInfo' style="color: black; width: 350px; background-color: #5A647E; opacity: 0.8; border-style:solid; border-width: 2px; border-radius: 5px">
-                            <tr>
-                                <td style="width: 110px;">Distance run:</td>
-                                <td id='curDistance'>0 miles</td>
-                        <td style="width: 75px;">SOG: </td>
-                        <td id="SOG">0kn.</td>
-                            </tr>
-                            <tr>
-                                <td>Distance to go:</td>
-                                <td id='leaveDistance'>0 miles.</td>
-                        <td style="width: 75px;">STW: </td>
-                        <td id="STW">0kn.</td>
-                            </tr>
-                            <tr>
-                                <td>Time to go:</td>
-                                <td id='timeToGo'>0 min.</td>
-                        <td style="width: 75px;">Course: </td>
-                        <td id="Course">0º</td>
-                            </tr>
-                        </table>
-                  </div>
+                    <table id='routeInfo' style="color: black; width: 180px; background-color: #5A647E; opacity: 0.8; border-style:solid; border-width: 2px; border-radius: 5px">
+                        <tr>
+                            <td style="width: 90px;">Distance run:</td>
+                            <td data-m='cur-distance' class="overflow-hidden">0 miles</td>
+                        </tr>
+                        <tr>
+                            <td>Distance to go:</td>
+                            <td data-m='distance-to-go' class="overflow-hidden">0 miles.</td>
+                        </tr>
+                        <tr>
+                            <td>Time to go:</td>
+                            <td data-m='time-to-go' class="overflow-hidden">0 min.</td>
+                        </tr>
+                        <tr>
+                            <td>SOG: </td>
+                            <td data-m="sog" class="overflow-hidden">0kn.</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>STW: </td>
+                            <td id="STW" class="overflow-hidden">0kn.</td>
+                        </tr>      
+                        <tr>
+                            <td>Course: </td>
+                            <td data-m="course" class="overflow-hidden">0º</td>
+                        </tr>
+                    </table>
+                    <div id="jobManager" class="accordion bg-light" style="width: 300px;">
+                        <div class="accordion-item">
+                            <div class="accordion-header" id="headingOne">
+                                <div class="d-flex p-2">
+                                    <div class="flex-grow-1 overflow-hidden me-3">
+                                        <div class="progress animated-progess mb-1">
+                                            <div class="progress-bar bg-primary" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <p class="text-truncate font-size-13 text-muted mb-0" m-id="descr">mapID there</p>
+                                        <p class="text-truncate font-size-13 text-muted mb-0" m-id="state">Paused</p>
+                                    </div>
+                                    <div class="flex-shrink-0 text-end">
+                                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                            <button type="button" class="btn btn-primary" m-id="btn-play"><i class="bx bx-play font-size-16 align-middle"></i></button>
+                                            <button type="button" class="btn btn-primary collapsed" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne"><i class="mdi mdi-chevron-down"></i></button>               
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne">
+                                <div class="accordion-body ">
+                                    <div class="text-muted d-flex">
+                                        <strong class="text-dark d-inline-block">Size:&nbsp;</strong><div class="d-inline-block" m-id="size">0.00kB</div>
+                                    </div>
+                                    <div class="text-muted d-flex">
+                                        <strong class="text-dark d-inline-block">Tiles:&nbsp;</strong><div class="d-inline-block" m-id="tiles">0 from 0</div>
+                                    </div>
+                                    <div class="text-muted d-flex">
+                                        <strong class="text-dark d-inline-block">E/S/E:&nbsp;</strong><div class="d-inline-block" m-id="ese">0/0/0</div>
+                                    </div>
+                                    <div class="text-muted d-flex">
+                                        <strong class="text-dark d-inline-block">Time:&nbsp;</strong><div class="d-inline-block" m-id="time">0 min</div>
+                                    </div>
+                                    <div class="text-muted d-flex">
+                                        <strong class="text-dark d-inline-block">ETA:&nbsp;&nbsp;</strong><div class="d-inline-block" m-id="eta">N/A</div>
+                                    </div>
+                                    <div class="d-flex flex-wrap gap-3 mt-2">
+                                        <div class="btn-group" role="group" aria-label="Basic example">
+                                            <button type="button" class="btn btn-primary" m-action="btn-up"><i class="bx bx-sort-up font-size-16 align-middle me-2"></i> Up</button>
+                                            <button type="button" class="btn btn-primary" m-action="btn-delete"><i class="bx bxs-eraser font-size-16 align-middle me-2"></i> Delete</button>
+                                            <button type="button" class="btn btn-primary" m-action="btn-down"><i class="bx bx-sort-down font-size-16 align-middle me-2"></i> Down</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="cachedMapBar" style="max-width: 300px !important; display: none;">
+                        <div class="d-flex p-2 bg-light">
+                            <div class="flex-grow-1 overflow-hidden me-3">
+                                <div class="progress animated-progess mb-2 mt-2">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 25%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <p class="text-truncate font-size-13 text-muted mb-0" m-data="descr">Checked 0 from 0.</p>
+                            </div>
+                            <div class="flex-shrink-0 text-end">
+                                <button type="button" class="btn btn-primary" m-data="btn-cancel"><i class="mdi mdi-cancel font-size-16 align-middle"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="drawingRouteProgress" style="display: none;">
+                        <div class="d-flex p-2 bg-light">
+                            <div class="flex-grow-1 overflow-hidden me-3">
+                                <div class="progress animated-progess mb-2 mt-2">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 25%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <p class="font-size-13 text-muted mb-0" m-data="descr">Checked 0 from 0.</p>
+                            </div>
+                            <div class="flex-shrink-0 text-end">
+                                <button type="button" class="btn btn-primary" m-action="cancel"><i class="mdi mdi-cancel font-size-16 align-middle"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
             </div>
             <!-- end main content-->
 
@@ -468,7 +577,7 @@
             <div data-simplebar class="h-100">
                 <div class="rightbar-title d-flex align-items-center bg-dark p-3">
 
-                    <h5 class="m-0 me-2 text-white">Theme Customizer</h5>
+                    <h5 class="m-0 me-2 text-white">POI Manager</h5>
 
                     <a href="javascript:void(0);" class="right-bar-toggle ms-auto">
                         <i class="mdi mdi-close noti-icon"></i>
@@ -478,121 +587,73 @@
                 <!-- Settings -->
                 <hr class="m-0" />
 
-                <div class="p-4">
-                    <h6 class="mb-3">Layout</h6>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="layout"
-                            id="layout-vertical" value="vertical">
-                        <label class="form-check-label" for="layout-vertical">Vertical</label>
+                <div class="accordion accordion-flush" id="accordionFlushExample">
+                    <div class="accordion-item">
+                        <div class="accordion-header" id="headingOne">
+                            <!--<div class="d-flex p-2">
+                                <!--<div class="flex-grow-1 overflow-hidden me-3">
+                                    <h6><i class="mdi mdi-folder-open icon"></i><span>Some category</span></h6>
+                                </div>
+                                <div class="flex-shrink-0 text-end">
+                                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                        <button type="button" class="btn btn-sm btn-soft-link waves-effect collapsed" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne"><i class="mdi mdi-chevron-down"></i></button>               
+                                    </div>
+                                </div>
+                            </div>-->
+                            <div class="d-flex p-2">
+                                <div class="flex-grow-1 overflow-hidden me-3">
+                                    <button id="btnGroupDrop1" type="button" class="btn btn-sm btn-soft-link collapsed" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                        <i class="mdi mdi-folder-open"></i> Dropdown 
+                                    </button>
+                                </div>
+                                <div class="flex-shrink-0 text-end">
+                                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                        <button type="button" class="btn btn-sm btn-primary">1</button>
+                                        <button type="button" class="btn btn-sm btn-primary">2</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <div class="accordion accordion-flush" id="accordionFlushExample2">
+                                    <div class="accordion-item">
+                                        <div class="accordion-header" id="headingTwo">
+                                            <!--<div class="d-flex p-2">
+                                                <!--<div class="flex-grow-1 overflow-hidden me-3">
+                                                    <h6><i class="mdi mdi-folder-open icon"></i><span>Some category</span></h6>
+                                                </div>
+                                                <div class="flex-shrink-0 text-end">
+                                                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                                        <button type="button" class="btn btn-sm btn-soft-link waves-effect collapsed" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne"><i class="mdi mdi-chevron-down"></i></button>               
+                                                    </div>
+                                                </div>
+                                            </div>-->
+                                            <div class="d-flex p-2">
+                                                <div class="flex-grow-1 overflow-hidden me-3">
+                                                    <button id="btnGroupDrop2" type="button" class="btn btn-sm btn-soft-link collapsed" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                        <i class="mdi mdi-folder-open"></i> Dropdown 
+                                                    </button>
+                                                </div>
+                                                <div class="flex-shrink-0 text-end">
+                                                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                                        <button type="button" class="btn btn-sm btn-primary">1</button>
+                                                        <button type="button" class="btn btn-sm btn-primary">2</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample2">
+                                            <div class="accordion-body">
+                                                Some text there
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- end accordion -->
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="layout"
-                            id="layout-horizontal" value="horizontal">
-                        <label class="form-check-label" for="layout-horizontal">Horizontal</label>
-                    </div>
-
-                    <h6 class="mt-4 mb-3 pt-2">Layout Mode</h6>
-
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="layout-mode"
-                            id="layout-mode-light" value="light">
-                        <label class="form-check-label" for="layout-mode-light">Light</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="layout-mode"
-                            id="layout-mode-dark" value="dark">
-                        <label class="form-check-label" for="layout-mode-dark">Dark</label>
-                    </div>
-
-                    <h6 class="mt-4 mb-3 pt-2">Layout Width</h6>
-
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="layout-width"
-                            id="layout-width-fuild" value="fuild" onchange="document.body.setAttribute('data-layout-size', 'fluid')">
-                        <label class="form-check-label" for="layout-width-fuild">Fluid</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="layout-width"
-                            id="layout-width-boxed" value="boxed" onchange="document.body.setAttribute('data-layout-size', 'boxed')">
-                        <label class="form-check-label" for="layout-width-boxed">Boxed</label>
-                    </div>
-
-                    <h6 class="mt-4 mb-3 pt-2">Layout Position</h6>
-
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="layout-position"
-                            id="layout-position-fixed" value="fixed" onchange="document.body.setAttribute('data-layout-scrollable', 'false')">
-                        <label class="form-check-label" for="layout-position-fixed">Fixed</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="layout-position"
-                            id="layout-position-scrollable" value="scrollable" onchange="document.body.setAttribute('data-layout-scrollable', 'true')">
-                        <label class="form-check-label" for="layout-position-scrollable">Scrollable</label>
-                    </div>
-
-                    <h6 class="mt-4 mb-3 pt-2">Topbar Color</h6>
-
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="topbar-color"
-                            id="topbar-color-light" value="light" onchange="document.body.setAttribute('data-topbar', 'light')">
-                        <label class="form-check-label" for="topbar-color-light">Light</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="topbar-color"
-                            id="topbar-color-dark" value="dark" onchange="document.body.setAttribute('data-topbar', 'dark')">
-                        <label class="form-check-label" for="topbar-color-dark">Dark</label>
-                    </div>
-
-                    <h6 class="mt-4 mb-3 pt-2 sidebar-setting">Sidebar Size</h6>
-
-                    <div class="form-check sidebar-setting">
-                        <input class="form-check-input" type="radio" name="sidebar-size"
-                            id="sidebar-size-default" value="default" onchange="document.body.setAttribute('data-sidebar-size', 'lg')">
-                        <label class="form-check-label" for="sidebar-size-default">Default</label>
-                    </div>
-                    <div class="form-check sidebar-setting">
-                        <input class="form-check-input" type="radio" name="sidebar-size"
-                            id="sidebar-size-compact" value="compact" onchange="document.body.setAttribute('data-sidebar-size', 'md')">
-                        <label class="form-check-label" for="sidebar-size-compact">Compact</label>
-                    </div>
-                    <div class="form-check sidebar-setting">
-                        <input class="form-check-input" type="radio" name="sidebar-size"
-                            id="sidebar-size-small" value="small" onchange="document.body.setAttribute('data-sidebar-size', 'sm')">
-                        <label class="form-check-label" for="sidebar-size-small">Small (Icon View)</label>
-                    </div>
-
-                    <h6 class="mt-4 mb-3 pt-2 sidebar-setting">Sidebar Color</h6>
-
-                    <div class="form-check sidebar-setting">
-                        <input class="form-check-input" type="radio" name="sidebar-color"
-                            id="sidebar-color-light" value="light" onchange="document.body.setAttribute('data-sidebar', 'light')">
-                        <label class="form-check-label" for="sidebar-color-light">Light</label>
-                    </div>
-                    <div class="form-check sidebar-setting">
-                        <input class="form-check-input" type="radio" name="sidebar-color"
-                            id="sidebar-color-dark" value="dark" onchange="document.body.setAttribute('data-sidebar', 'dark')">
-                        <label class="form-check-label" for="sidebar-color-dark">Dark</label>
-                    </div>
-                    <div class="form-check sidebar-setting">
-                        <input class="form-check-input" type="radio" name="sidebar-color"
-                            id="sidebar-color-brand" value="brand" onchange="document.body.setAttribute('data-sidebar', 'brand')">
-                        <label class="form-check-label" for="sidebar-color-brand">Brand</label>
-                    </div>
-
-                    <h6 class="mt-4 mb-3 pt-2">Direction</h6>
-
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="layout-direction"
-                            id="layout-direction-ltr" value="ltr">
-                        <label class="form-check-label" for="layout-direction-ltr">LTR</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="layout-direction"
-                            id="layout-direction-rtl" value="rtl">
-                        <label class="form-check-label" for="layout-direction-rtl">RTL</label>
-                    </div>
-
-                </div>
+                </div><!-- end accordion -->
 
             </div> <!-- end slimscroll-menu-->
         </div>
@@ -602,7 +663,7 @@
         <div class="rightbar-overlay"></div>
 
         <!--New route Modal-->
-        <div class="modal fade" id="newRouteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="newRouteModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -624,12 +685,606 @@
                 </div>
             </div>
         </div>
-
+        <!--Modal for POI properties-->
+        <div class="modal fade" id="POIPropertiesModal" tabindex="-1" role="dialog" aria-labelledby="POIPropertiesModal" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">POI Properties</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form id="POIPropertiesForm" width="100%">
+                    <div class="row mb-3">
+                      <label class="col-md-2 col-form-label">Category: </label>
+                      <div class="col-md-10">
+                        <select class="form-select" name="categoryID">
+                          <option>Select</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="mb-3 row">
+                      <label for="example-text-input" class="col-md-2 col-form-label">Name: </label>
+                      <div class="col-md-10">
+                        <input class="form-control" type="text" name="name">
+                      </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="formrow-email-input">Color</label>
+                                <div id="mpColor"></div>
+                            </div>
+                        </div><!-- end col -->
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="formrow-password-input">Weight</label>
+                                <input class="form-control" type="number" name="weight">
+                            </div>
+                        </div><!-- end col -->
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                              <label class="form-label" for="formrow-email-input">Fill Color</label>
+                              <div id="mpFillColor"></div>
+                            </div>
+                        </div><!-- end col -->
+                    </div><!-- end row -->
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary" id="marksPropertiesSave">Save</button>
+                </div>
+              </div>
+            </div>
+        </div>
+        <!--/Modal for POI properties-->
+        <!--Panel for POI editing-->
+        <div id="intrumentalPanel" style="z-index: 2000; position: absolute; left: 300px; top: 200px; background-color: white; display: none;">
+            <button type="button" class="btn btn-light" m-action="move-panel"><i class="mdi mdi-cursor-move"></i></button>
+            <div class="btn-group mt-4 mt-md-0" role="group" aria-label="Basic example">
+              <button type="button" class="btn btn-light" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete point" data-bs-original-title="Delete point"><i class="mdi mdi-delete-circle-outline"></i></button>
+              <button type="button" class="btn btn-light" m-action="save" data-bs-toggle="tooltip" data-bs-placement="top" title="Save" data-bs-original-title="Save"><i class="mdi mdi-content-save-outline"></i></button>
+              <button type="button" class="btn btn-light" m-action="save-new" data-bs-toggle="tooltip" data-bs-placement="top" title="Save as new..." data-bs-original-title="Save as new..."><i class="mdi mdi-content-save-all"></i></button>
+            </div>
+        </div>
+        <!--/Panel for POI editing-->
+        <!--Panel for POI editing-->
+        <div id="drawerPanel" style="z-index: 2000; position: absolute; left: 300px; top: 200px; background-color: white; display: none;">
+            <button type="button" class="btn btn-light" m-action="move-panel"><i class="mdi mdi-cursor-move"></i></button>
+            <div class="btn-group mt-4 mt-md-0" role="group" aria-label="Basic example">
+              <button type="button" class="btn btn-light" m-action="save" data-bs-toggle="tooltip" data-bs-placement="top" title="Save" data-bs-original-title="Save"><i class="mdi mdi-content-save-outline"></i></button>
+              <button type="button" class="btn btn-light" m-action="cancel" data-bs-toggle="tooltip" data-bs-placement="top" title="Cancel" data-bs-original-title="Cancel"><i class="mdi mdi-cancel"></i></button>
+            </div>
+        </div>
+        <!--/Panel for POI editing-->
+        <!-- TileGridModal -->
+        <div id="tileGridModal" class="modal modal-dialog-centered fade" tabindex="-1" aria-labelledby="tileGridModalLabel" data-bs-scroll="true" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog" style="max-width: 400px !important;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tileGridModalLabel">Select Tile Grid Zoom</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(4, -1)">Z04</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(5, -1)">Z05</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(6, -1)">Z06</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(7, -1)">Z07</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(8, -1)">Z08</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(9, -1)">Z09</button>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(10, -1)">Z10</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(11, -1)">Z11</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(12, -1)">Z12</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(13, -1)">Z13</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(14, -1)">Z14</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(15, -1)">Z15</button>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(16, -1)">Z16</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(17, -1)">Z17</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(18, -1)">Z18</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(19, -1)">Z19</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(20, -1)">Z20</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(21, -1)">Z21</button>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+        <!--/TileGridModal -->
+        <!-- TileGridOffsetModal -->
+        <div id="tileGridOffsetModal" class="modal modal-dialog-centered fade" tabindex="-1" aria-labelledby="tileGridOffsetModalLabel" data-bs-scroll="true" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog" style="max-width: 400px !important;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tileGridOffsetModalLabel">Select Offset Zoom</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(0, 0)">0</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(0, 1)">+1</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(0, 2)">+2</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(0, 3)">+3</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(0, 4)">+4</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" onclick="setTileGrid(0, 5)">+5</button>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+        <!--/TileGridOffsetModal -->
+        <!-- PointAddModal -->
+        <div id="markAddModal" class="modal modal-dialog-centered fade" tabindex="-1" aria-labelledby="markAddModalLabel" data-bs-scroll="true" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog" style="max-width: 400px !important;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="markAddModalLabel">Add Mark To Map</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addMarkForm">
+                            <input type="hidden" name="lat" value="0">
+                            <input type="hidden" name="lng" value="0">
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Enter mark name:</label>
+                                <input type="text" class="form-control" name="name" value="GPS Point">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Select mark`s category</label>
+                                <select class="form-select" id="markAddCategoryList" name="categoryID">
+                                    <option>Select</option>
+                                    <option>Large select</option>
+                                    <option>Small select</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="addMarkBtn" data-bs-dismiss="modal">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--/PointAddModal -->
+        <!--Modal for Download job-->
+        <div id="jobModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Download tiles</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="jobForm" width="100%">
+                        <input type="hidden" name="polygonID" value="0" id="polygonID">
+                        <div class="row row-cols-2 g-0">
+                            <div class="col-sm-10">
+                                <h5 class="font-size-14 mb-3"><i class="mdi mdi-arrow-right text-primary me-1"></i> Options</h5>
+                                <div class="mb-3 col-sm-11">
+                                <label for="recipient-name" class="col-form-label">Map:</label>
+                                <select class="form-select" aria-label="Default select example" id="jobMap" name="mapID">
+                                    <option selected value="0">Select map</option>
+                                </select>
+                                </div>
+                                <label class="form-check-label">
+                                    Number of tiles: 0
+                                </label>
+                                <hr width="80%">
+                                <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="randomDownload" value="true">
+                                <label class="form-check-label">
+                                    Random download mode.
+                                </label>
+                                </div>
+                                <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="updateTiles" value="true">
+                                <label class="form-check-label">
+                                    Overwrite old tiles.
+                                </label>
+                                </div>
+                                <div class="form-check mb-3" style="margin-left: 20px;">
+                                <input class="form-check-input" type="checkbox" name="updateDifferent" value="true" disabled="">
+                                <label class="form-check-label">
+                                    only if different
+                                </label>
+                                </div>
+                                <div class="mb-3 col-sm-8" style="margin-left: 20px;">
+                                <input class="form-check-input" type="checkbox" name="updateDateTiles" value="true" disabled="">
+                                <label class="form-check-label mb-3">
+                                    only created before
+                                </label>
+                                <input class="form-control" type="date" value="2022-08-19" name="dateTiles" disabled="">
+                                </div>
+                                <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="emptyTiles" value="true">
+                                <label class="form-check-label">
+                                    Save empty tiles.
+                                </label>
+                                </div>
+                                <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="checkEmptyTiles" value="true">
+                                <label class="form-check-label">
+                                    Try download if empty tiles exists
+                                </label>
+                                </div>
+                                <div class="mb-3 col-sm-8" style="margin-left: 20px;">
+                                <input class="form-check-input" type="checkbox" name="updateDateEmpty" value="true" disabled="">
+                                <label class="form-check-label mb-3">
+                                    only created before
+                                </label>
+                                <input class="form-control" type="date" value="2022-08-19" disabled="" name="dateEmpty" disabled="">
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <h5 class="font-size-14 mb-3"><i class="mdi mdi-arrow-right text-primary me-1"></i> Zoom
+                                </h5>
+                                <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="zoom" value="4">
+                                <label class="form-check-label">
+                                    Z04
+                                </label>
+                                </div>
+                                <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="zoom" value="5">
+                                <label class="form-check-label">
+                                    Z05
+                                </label>
+                                </div>
+                                <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="zoom" value="6">
+                                <label class="form-check-label">
+                                    Z06
+                                </label>
+                                </div>
+                                <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="zoom" value="7">
+                                <label class="form-check-label">
+                                    Z07
+                                </label>
+                                </div>
+                                <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="zoom" value="8">
+                                <label class="form-check-label">
+                                    Z08
+                                </label>
+                                </div>
+                                <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="zoom" value="9">
+                                <label class="form-check-label">
+                                    Z09
+                                </label>
+                                </div>
+                                <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="zoom" value="10">
+                                <label class="form-check-label">
+                                    Z10
+                                </label>
+                                </div>
+                                <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="zoom" value="11">
+                                <label class="form-check-label">
+                                    Z11
+                                </label>
+                                </div>
+                                <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="zoom" value="12">
+                                <label class="form-check-label">
+                                    Z12
+                                </label>
+                                </div>
+                                <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="zoom" value="13">
+                                <label class="form-check-label">
+                                    Z13
+                                </label>
+                                </div>
+                                <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="zoom" value="14">
+                                <label class="form-check-label">
+                                    Z14
+                                </label>
+                                </div>
+                                <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="zoom" value="15">
+                                <label class="form-check-label">
+                                    Z15
+                                </label>
+                                </div>
+                                <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="zoom" value="16">
+                                <label class="form-check-label">
+                                    Z16
+                                </label>
+                                </div>
+                                <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="zoom" value="17">
+                                <label class="form-check-label">
+                                    Z17
+                                </label>
+                                </div>
+                                <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="zoom" value="18">
+                                <label class="form-check-label">
+                                    Z18
+                                </label>
+                                </div>
+                                <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="zoom" value="19">
+                                <label class="form-check-label">
+                                    Z19
+                                </label>
+                                </div>
+                                <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="zoom" value="20">
+                                <label class="form-check-label">
+                                    Z20
+                                </label>
+                                </div>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="startJob">Add job to list</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--/Modal for Download job-->
+        <!--Modal for Generate Map job-->
+        <div id="jobGenerateModal" class="modal modal-dialog-centered fade"  tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Generate tiles from lower layer</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form id="jobFormGenerate" width="100%">
+                    <input type="hidden" name="polygonID" value="0" id="polygonIDGenerate">
+                    <div class="row row-cols-2 g-0">
+                      <div class="col-sm-10">
+                          <h5 class="font-size-14 mb-3"><i class="mdi mdi-arrow-right text-primary me-1"></i> Options</h5>
+                          <div class="mb-3 col-sm-11">
+                            <label for="recipient-name" class="col-form-label">Map:</label>
+                            <select class="form-select" aria-label="Default select example" id="mapsListGenerate" name="mapID">
+                              <option selected value="0">Select map</option>
+                            </select>
+                          </div>
+                          <label class="form-check-label">
+                              Number of tiles: 0
+                          </label>
+                          <hr width="80%">
+                          <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" name="updateTiles" value="true">
+                            <label class="form-check-label">
+                                Overwrite existing tiles.
+                            </label>
+                          </div>
+                          <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" name="completeTiles" value="true">
+                            <label class="form-check-label">
+                                Save only complete tiles.
+                            </label>
+                          </div>
+                          <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" name="previousZoom" value="true">
+                            <label class="form-check-label">
+                                Generate zoom using previous zoom only. (Reduce DB reading and time).
+                            </label>
+                          </div>
+                        </div>
+                      <div class="col-sm-2">
+                        <div class="mb-3 col-sm-11">
+                          <label for="recipient-name" class="col-form-label">From zoom:</label>
+                          <select class="form-select" aria-label="Default select example" name="fromZoom">
+                            <option selected value="21">21</option>
+                            <option selected value="20">20</option>
+                            <option selected value="19">19</option>
+                            <option selected value="18">18</option>
+                            <option selected value="17">17</option>
+                            <option selected value="16">16</option>
+                            <option selected value="15">15</option>
+                            <option selected value="14">14</option>
+                            <option selected value="13">13</option>
+                            <option selected value="12">12</option>
+                            <option selected value="11">11</option>
+                            <option selected value="10">10</option>
+                            <option selected value="9">9</option>
+                            <option selected value="8">8</option>
+                          </select>
+                        </div>
+                          <h5 class="font-size-14 mb-3"><i class="mdi mdi-arrow-right text-primary me-1"></i> To zooms:</h5>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="zoom" value="4">
+                            <label class="form-check-label">
+                                Z04
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="zoom" value="5">
+                            <label class="form-check-label">
+                                Z05
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="zoom" value="6">
+                            <label class="form-check-label">
+                                Z06
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="zoom" value="7">
+                            <label class="form-check-label">
+                                Z07
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="zoom" value="8">
+                            <label class="form-check-label">
+                                Z08
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="zoom" value="9">
+                            <label class="form-check-label">
+                                Z09
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="zoom" value="10">
+                            <label class="form-check-label">
+                                Z10
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="zoom" value="11">
+                            <label class="form-check-label">
+                                Z11
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="zoom" value="12">
+                            <label class="form-check-label">
+                                Z12
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="zoom" value="13">
+                            <label class="form-check-label">
+                                Z13
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="zoom" value="14">
+                            <label class="form-check-label">
+                                Z14
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="zoom" value="15">
+                            <label class="form-check-label">
+                                Z15
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="zoom" value="16">
+                            <label class="form-check-label">
+                                Z16
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="zoom" value="17">
+                            <label class="form-check-label">
+                                Z17
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="zoom" value="18">
+                            <label class="form-check-label">
+                                Z18
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="zoom" value="19">
+                            <label class="form-check-label">
+                                Z19
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="zoom" value="20">
+                            <label class="form-check-label">
+                                Z20
+                            </label>
+                          </div>
+                        </div>
+                    </div>
+                </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary" id="startJobGenerate">Add job to list</button>
+                </div>
+              </div>
+            </div>
+        </div>
+        <!--/Modal for Generate Map job-->
+        <!-- CachedMapModal -->
+        <div id="cachedMapModal" class="modal modal-dialog-centered fade" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog" style="max-width: 400px !important;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cachedMapModalLabel">Cached Map Config</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <select class="form-select" aria-label="Default select example" id="mapsListCachedMap">
+                                <option selected value="">Select map</option>
+                            </select>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-zoom" m-data="4">Z04</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-zoom" m-data="5">Z05</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-zoom" m-data="6">Z06</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-zoom" m-data="7">Z07</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-zoom" m-data="8">Z08</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-zoom" m-data="9">Z09</button>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-zoom" m-data="10">Z10</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-zoom" m-data="11">Z11</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-zoom" m-data="12">Z12</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-zoom" m-data="13">Z13</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-zoom" m-data="14">Z14</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-zoom" m-data="15">Z15</button>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-zoom" m-data="16">Z16</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-zoom" m-data="17">Z17</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-zoom" m-data="18">Z18</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-zoom" m-data="19">Z19</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-zoom" m-data="20">Z20</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-zoom" m-data="21">Z21</button>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-offset" m-data="1">+1</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-offset" m-data="2">+2</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-offset" m-data="3">+3</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-offset" m-data="4">+4</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-offset" m-data="5">+5</button>
+                            <button type="button" class="btn btn-outline-primary waves-effect waves-light" data-bs-dismiss="modal" m-action="set-offset" m-data="6">+6</button>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+        <!--/CachedMapModal -->
         <!-- JAVASCRIPT -->
         <script src="assets/libs/jquery/jquery.min.js"></script>
         <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
         <!-- alertifyjs js -->
         <script src="assets/libs/alertifyjs/build/alertify.min.js"></script>
+
+        <!-- color picker js -->
+        <script src="assets/libs/%40simonwep/pickr/pickr.min.js"></script>
+        <script src="assets/libs/%40simonwep/pickr/pickr.es5.min.js"></script>
 
         <script src="assets/libs/simplebar/simplebar.min.js"></script>
         <script src="assets/libs/node-waves/waves.min.js"></script>
@@ -639,6 +1294,9 @@
 
         <!-- leaflet plugin -->
         <script src="assets/libs/leaflet/leaflet.js"></script>
+        <!--Vector Map Support-->
+        <script src="leaflet/mapbox/mapbox-gl.js"></script>
+        <script src="leaflet/mapbox/leaflet-mapbox-gl.js"></script>
 
         <!-- leaflet plugin -->
         <script src="leaflet/Leaflet.Editable.js"></script>
@@ -646,13 +1304,16 @@
         <script src="leaflet/polyline.distance.js"></script>
         <script src="leaflet/L.Control.Bar.js"></script>
         <script src="leaflet/leaflet.tilegrid.js"></script>
-        <script src="leaflet/leaflet.MDraw.js"></script>
+        <script src="leaflet/leaflet.MDrawer.js"></script>
         <script src="leaflet/leaflet.cachedmap.layer.js"></script>
         <script src="leaflet/leaflet.contextmenu.js"></script>
-        <script src="leaflet/Leaflet.VectorGrid.js"></script>
+        <!--<script src="leaflet/Leaflet.VectorGrid.js"></script>-->
 
         <!--Maptorium-->
         <script src="maptorium-ui/maptorium.js"></script>
+        <script src="leaflet/globals.js"></script>
+        <script src="leaflet/leaflet.MDraw.js"></script>
+
         <script src="leaflet/maptorium-init.js"></script>
 
         <script src="assets/libs/metismenu/metisMenu.min.js"></script>

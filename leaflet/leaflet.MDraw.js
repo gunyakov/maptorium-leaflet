@@ -1,4 +1,33 @@
 //------------------------------------------------------------------------------
+//Marker
+//------------------------------------------------------------------------------
+let ship16 = L.icon({
+  iconUrl : 'assets/images/Container-Ship-Top-Red-icon16.png',
+  iconRetinaUrl : 'my-icon@2x.png',
+  iconSize : [16, 16],
+  iconAnchor : [8, 8],
+});
+let ship24 = L.icon({
+  iconUrl : 'assets/images/Container-Ship-Top-Red-icon24.png',
+  iconRetinaUrl : 'my-icon@2x.png',
+  iconSize : [24, 24],
+  iconAnchor : [12, 12],
+});
+
+let ship32 = L.icon({
+  iconUrl : 'assets/images/Container-Ship-Top-Red-icon32.png',
+  iconRetinaUrl : 'my-icon@2x.png',
+  iconSize : [32, 32],
+  iconAnchor : [18, 18],
+});
+
+let ship48 = L.icon({
+  iconUrl : 'assets/images/Container-Ship-Top-Red-icon48.png',
+  iconRetinaUrl : 'my-icon@2x.png',
+  iconSize : [48, 48],
+  iconAnchor : [24, 24],
+});
+//------------------------------------------------------------------------------
 //Draw polylines route/route history and handle marker position.
 //------------------------------------------------------------------------------
 L.maptoriumDrawer = L.Control.extend({
@@ -7,43 +36,20 @@ L.maptoriumDrawer = L.Control.extend({
     showRoute: false,
     gpsRun: false,
     routeColor: '#932402',
-    historyColor: '#ffff77'
+    historyColor: '#ffff77',
+    //------------------------------------------------------------------------------
+    //Default style for geometry
+    //------------------------------------------------------------------------------
+    color: '#3388ff',
+    fillColor: '#444444',
+    fillOpacity: 0.5,
+    weight: 2
   },
   initialize: function (options) {
 	  L.setOptions(this, options);
     this._map = false;
     this.marker = false;
-    this.history = [];
-    this.routeDistance = 0;
-    //------------------------------------------------------------------------------
-    //Marker
-    //------------------------------------------------------------------------------
-    this.ship16 = L.icon({
-    	iconUrl : 'assets/images/Container-Ship-Top-Red-icon16.png',
-    	iconRetinaUrl : 'my-icon@2x.png',
-    	iconSize : [16, 16],
-    	iconAnchor : [8, 8],
-    });
-    this.ship24 = L.icon({
-    	iconUrl : 'assets/images/Container-Ship-Top-Red-icon24.png',
-    	iconRetinaUrl : 'my-icon@2x.png',
-    	iconSize : [24, 24],
-    	iconAnchor : [12, 12],
-    });
-
-    this.ship32 = L.icon({
-    	iconUrl : 'assets/images/Container-Ship-Top-Red-icon32.png',
-    	iconRetinaUrl : 'my-icon@2x.png',
-    	iconSize : [32, 32],
-    	iconAnchor : [18, 18],
-    });
-
-    this.ship48 = L.icon({
-    	iconUrl : 'assets/images/Container-Ship-Top-Red-icon48.png',
-    	iconRetinaUrl : 'my-icon@2x.png',
-    	iconSize : [48, 48],
-    	iconAnchor : [24, 24],
-    });
+    this.history = {};
     //--------------------------------------------------------------------------
     //Work with GPS data update
     //--------------------------------------------------------------------------
@@ -58,6 +64,20 @@ L.maptoriumDrawer = L.Control.extend({
     //Rotate marker according direction
     if(dir) this.marker.setRotationAngle(dir + 90);
   },
+  drawRoute: function(points) {
+    this._clean();
+    let polyline = this._drawPolyline(points, this.options.routeColor, this.options.weight);
+    if(polyline) {
+      polyline.bringToFront();
+      this.route = polyline;
+      this._map.addLayer(this.route);
+      this._update();
+    }
+    else {
+      console.log("Points empty", points);
+    }
+    
+  },
   routePoint: function(lat, lng) {
     //If polyline is present on map
     if(this.route) {
@@ -65,13 +85,6 @@ L.maptoriumDrawer = L.Control.extend({
       var point = L.latLng(lat, lng);
       //Add point to polyline
       this.route.addLatLng(point);
-      let curDistance = this.route.distance("m");
-      $("#curDistance").text(curDistance + " mls.");
-      // if(this.distance > 0) {
-      //   let timeToGo = (this.distance - curDistance) / data['sog'];
-      //   $("#timeToGo").html(timeToGo.toFixed(2) + " hrs");
-      //   $("#leaveDistance").html((this.distance - curDistance) + " mls.");
-      // }
     }
   },
   onAdd: function(map) {
@@ -91,14 +104,6 @@ L.maptoriumDrawer = L.Control.extend({
     //Remove polyline from map
     this._clean();
   },
-  drawRoute: function(points) {
-    this._clean();
-    let polyline = this._drawPolyline(points, this.options.routeColor);
-    this.route = polyline;
-    $("#curDistance").text(this.route.distance("m") + " miles.");
-    this._map.addLayer(this.route);
-    this._update();
-  },
   service: function() {
     this.options.gpsRun = !this.options.gpsRun;
     if(!this.options.gpsRun && this.marker) {
@@ -109,29 +114,98 @@ L.maptoriumDrawer = L.Control.extend({
   },
   hideHistory: function() {
     if(this._map) {
-      for (let [key, value] of Object.entries(this.history)) {
-        this._map.removeLayer(value);
+      let keys = Object.keys(this.history);
+      for(let i = 0; i < keys.length; i++) {
+        this._map.removeLayer(this.history[keys[i]]);
       }
     }
-    this.history = [];
-    this.routeDistance = 0;
+    this.history = {};
   },
-  drawPolyline: function(points, color = this.options.historyColor) {
-    let polyline = this._drawPolyline(points, color);
-    //Save polyline in history storage
-    this.history.push(polyline);
-    this.routeDistance += polyline.distance("m");
+  drawPolyline: function(points, ID = 0, config) {
+    let polyline = this._drawPolyline(points, config?.color || this.options.historyColor, config?.weight || this.options.weight);
+    if(polyline) {
+      //Save polyline in history storage
+      this.history[ID] = polyline;
+      polyline.maptoriumID = ID;
+      if(config?.name) {
+        polyline.bindTooltip(config.name); 
+        polyline.name = config.name;
+      }
+      else {
+        polyline.bindTooltip('Polyline ' + ID);
+        polyline.name = 'Polyline ' + ID;
+      }
+      polyline.bindContextMenu(globalPointOptions);
+    }
+    else {
+      console.log("Error create polyline");
+    }
   },
-  _drawPolyline: function(points, color) {
+  //Add new point to polyline
+  pointPolyline: function(ID, lat, lng) {
+    let polyline = this.history[ID];
+    //If polyline is present on map
+    if(polyline) {
+      //Get Leaflet point by GPS Coords
+      var point = L.latLng(lat, lng);
+      //Add point to polyline
+      polyline.addLatLng(point);
+    }
+  },
+  //----------------------------------------------------------------------------
+  //Draw polygon on map
+  //----------------------------------------------------------------------------
+  drawPolygon: function(points, ID, options = {name: "", color: this.options.color, fillColor: this.options.fillColor, fillOpacity: this.options.fillOpacity, width: 2}) {
+    let latlngs = this._convertPoints(points);
+    let polygon = L.polygon(latlngs, {
+      color: options.color,
+      fillColor: options.fillColor,
+      fillOpacity: options.fillOpacity,
+      weight: options.width
+    });
+    polygon.maptoriumID = ID;
+    
+    if(options.name) {
+      polygon.bindTooltip(options.name); 
+      polygon.name = options.name;
+    }
+    else {
+      polygon.bindTooltip('Poi ' + ID);
+      polygon.name = 'Poi ' + ID;
+    }
+    polygon.shape = "polygon";
+    if(this._map) polygon.addTo(this._map);
+    else console.log("Map is empty");
+    polygon.bindContextMenu(globalPolygonOptions);
+    polygon.bringToFront();
+  },
+  drawPoint: function(pointInfo) {
+    let marker = L.marker([pointInfo.lat, pointInfo.lng], {
+      title: pointInfo.name
+    }).addTo(map);
+    marker.maptoriumID = pointInfo.ID;
+    marker.bindContextMenu(globalPointOptions);
+  },
+  //----------------------------------------------------------------------------
+  //Convert points from server format to leaflet format
+  //----------------------------------------------------------------------------
+  _convertPoints: function(points) {
     let latlngs = [];
     if(points?.length > 1) {
       //Fill array with leaflet points
-      for(i = 0; i < points.length - 1; i++) {
-        latlngs.push([points[i]["lat"], points[i]["lon"]])
+      for(let i = 0; i < points.length; i++) {
+        latlngs.push([points[i]["lat"], points[i]["lng"]]);
       }
+    }
+    return latlngs;
+  },
+  _drawPolyline: function(points, color, weight) {
+    let latlngs = points;
+    //let latlngs = this._convertPoints(points);
+    if(latlngs?.length > 1) {
       //Create Leflet polyline
       let polyline = new L.polyline(latlngs, {
-        weight : 1,
+        weight : weight,
         color : color
       });
       //If Leflet create map
@@ -143,6 +217,10 @@ L.maptoriumDrawer = L.Control.extend({
       }
       return polyline;
     }
+    else {
+      console.log("Point list empty. Cant create polyline", points);
+      return false;
+    }
   },
   _makeMarker: function(lat, lng) {
     //Get Leaflet point by GPS Coords
@@ -150,9 +228,9 @@ L.maptoriumDrawer = L.Control.extend({
     //If marker is not shown on map yet
     if(!this.marker) {
       //Create new marker
-      this.marker = new L.RotaitedMarker(point, {
+      this.marker = L.rotaitedMarker(point, {
         icon : this.ship16,
-        rotationOrigin: "center center",
+        rotationOrigin: "center",
       });
     }
     if(this._map) {
@@ -178,22 +256,22 @@ L.maptoriumDrawer = L.Control.extend({
   //----------------------------------------------------------------------------
   _update: function() {
     if (this._map.getZoom() <= 4) {
-      if(this.marker) this.marker.setIcon(this.ship16);
+      if(this.marker) this.marker.setIcon(ship16);
       if(this.route) this.route.setStyle({weight : 1});
     }
 
     if (this._map.getZoom() > 4 && this._map.getZoom() <= 7) {
-      if(this.marker) this.marker.setIcon(this.ship24);
+      if(this.marker) this.marker.setIcon(ship24);
       if(this.route) this.route.setStyle({weight : 2});
     }
 
     if (this._map.getZoom() > 7 && this._map.getZoom() <= 10) {
-      if(this.marker) this.marker.setIcon(this.ship32);
+      if(this.marker) this.marker.setIcon(ship32);
       if(this.route) this.route.setStyle({weight : 3});
     }
 
     if (this._map.getZoom() > 10) {
-      if(this.marker) this.marker.setIcon(this.ship48);
+      if(this.marker) this.marker.setIcon(ship48);
       if(this.route) this.route.setStyle({weight : 4});
     }
   }

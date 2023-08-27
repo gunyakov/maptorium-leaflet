@@ -191,24 +191,23 @@ L.TileGrid = L.Class.extend({
   		point = L.point(x1, y1 + 256);
   		point = this._map.unproject(point, this._map.getZoom());
   		latlngs.push([point.lat, point.lng]);
-  		let polygon = L.polygon(latlngs, this.options).addTo(this._map);
+  		let polygon = L.polygon(latlngs, this.options);
       polygon.bindContextMenu(this.options);
   		this._selectMode = false;
+      let coords = polygon.getLatLngs();
       //console.log(polygon);
       let geometry = {
-        type: "Polygon",
+        type: "polygon",
         bounds: false,
         color: this.options.color,
         fillColor: this.options.fillColor,
         fillOpacity: this.options.fillOpacity,
-        coords: this._projectCoords(polygon.getLatLngs()),
+        points: coords[0],
         bounds: polygon.getBounds(),
         zoom: this._map.getZoom()
       }
-      geometry.bounds._southWest = this._map.project(geometry.bounds._southWest);
-      geometry.bounds._northEast = this._map.project(geometry.bounds._northEast);
       if(this._callback) {
-        this._callback(geometry, polygon);
+        this._callback(geometry);
       }
   	}
   }

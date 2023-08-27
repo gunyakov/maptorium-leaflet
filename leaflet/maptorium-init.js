@@ -1,9 +1,4 @@
 //------------------------------------------------------------
-//Init leaflet map
-//------------------------------------------------------------
-$("#leaflet-map").height($(document).height() - $(".navbar-header").height() + 2);
-let map = L.map('leaflet-map').setView([39, 0], 5);
-//------------------------------------------------------------
 //Vars for leaflet 
 //------------------------------------------------------------
 let mapsLayers = {};
@@ -21,14 +16,13 @@ MDraw.onAdd(map);
 //------------------------------------------------------------------------------
 var GPSInfoBar = L.Control.extend({
     options : {
-    position : 'bottomleft'
+        position : 'bottomleft'
     },
-
     onAdd : function(map) {
-    // create the control container with a particular class name
-    var container = L.DomUtil.get('routeInfo');
-    // ... initialize other DOM elements, add listeners, etc.
-    return container;
+        // create the control container with a particular class name
+        var container = L.DomUtil.get('routeInfo');
+        // ... initialize other DOM elements, add listeners, etc.
+        return container;
     }
 });
 map.addControl(new GPSInfoBar());
@@ -40,6 +34,76 @@ var controlBar = L.control.bar('bar',{
     visible: true
 });
 map.addControl(controlBar);
+
+var jobmanager = L.Control.extend({
+    options: {
+        position: "topright",
+        visible: true
+    },
+    onAdd : function(map) {
+        this._map = map;
+        if(!this._container) {
+            this._container = L.DomUtil.get("jobManager");
+        }
+        // Make sure we don't drag the map when we interact with the content
+        var stop = L.DomEvent.stopPropagation;
+        L.DomEvent
+            .on(this._container, 'contextmenu', stop)
+            .on(this._container, 'click', stop)
+            .on(this._container, 'mousedown', stop)
+            .on(this._container, 'touchstart', stop)
+            .on(this._container, 'dblclick', stop)
+            .on(this._container, 'mousewheel', stop)
+            .on(this._container, 'MozMousePixelScroll', stop);
+        return this._container;
+    }
+});
+let jobManager = new jobmanager();
+map.addControl(jobManager);
+
+var cachedmapstate = L.Control.extend({
+    options: {
+        position: "bottomright",
+        visible: true
+    },
+    onAdd : function(map) {
+        this._map = map;
+        if(!this._container) {
+            this._container = L.DomUtil.get("cachedMapBar");
+        }
+        return this._container;
+    }
+});
+map.addControl(new cachedmapstate());
+
+var routeProgress = L.Control.extend({
+    options: {
+        position: "bottomright",
+        visible: true
+    },
+    onAdd : function(map) {
+        this._map = map;
+        if(!this._container) {
+            this._container = L.DomUtil.get("drawingRouteProgress");
+        }
+        return this._container;
+    }
+});
+map.addControl(new routeProgress());
+// let jobManagerShow = false;
+
+// $("#job-manager-btn").on("click", function() {
+//     if(jobManagerShow) {
+//         map.removeControl(jobManager);
+//         jobManagerShow = false;
+//         $("#job-manager-btn").removeClass("bg-secondary");
+//     }
+//     else {
+//         map.addControl(jobManager);
+//         jobManagerShow = true;
+//         $("#job-manager-btn").addClass("bg-secondary");
+//     }
+// });
 //------------------------------------------------------------------------------
 //Tile grid add to map
 //------------------------------------------------------------------------------
@@ -54,41 +118,6 @@ let setTileGrid = function(zoom, zoomOffset) {
     TileGrid.setGrid(zoom, zoomOffset);
 }
 
-let MDOM = new M.MDOM({
-    mapsContainerID: "maps-list",
-    layersContainerID: "layers-list",
-    menuParrentTag: "ul",
-    menuChildTag: "li",
-    menuParrentClass: "",
-    menuChildClass: "",
-    menuSelectedClass: "bg-secondary",
-    gpsRouteButton: "gps-show-route",
-    gpsRouteRecordButton: "gps-record-route",
-    gpsRouteNewButton: "gps-new-route",
-    gpsRouteTimeButton: "gps-sample-time",
-    gpsHistoryButton: "gps-history-list",
-    gpsHistoryCleanButton: "gps-clear-history",
-    toggleClass: "bg-secondary",
-    mapContainerID: "mapMenuContainer",
-    routeListContainer: "route-list"
-});
-
-//------------------------------------------------------------
-//Config for maptorium UI
-//------------------------------------------------------------
-let MUI = new M.Maptorium({
-    vectorMapSupport: false,
-    MDOM: MDOM
-});
-//Save zoom to default config (used to restore when page reload)
-map.on("zoomend", () => {
-    MUI.setZoom(map.getZoom());
-});
-//Save map center to default config (used to restore when page reload)
-map.on("moveend", () => {
-    MUI.setCoords(map.getCenter()['lat'], map.getCenter()['lng']);
-});
-
 $("#gps-new-route").on('click', function(e) {
     let rname = $("#new-route-name").val();
     $("#newRouteModal").modal("hide");
@@ -96,28 +125,22 @@ $("#gps-new-route").on('click', function(e) {
         alertify.error("New route name less than 4 simbols. Skip.");
     }
     else {
-        MUI.startNewRoute(rname);
+        M.startNewRoute(rname);
         $("#new-route-name").val("");
     }
 });
+//Draw Polygone using tile boudaries
 $("#b-select-tile").on("click", (ev) => {
-    TileGrid.select(async function(geometry, polygonRef) {
-        let poiID = await MUI.addPOI(geometry);
-        console.log(poiID);
-        if(poiID > 0) {
-            polygonRef.maptoriumID = poiID;
-            polygonRef.bindTooltip('Geometry ' + response.markID);
-            polygonRef.shape = "Polygon";
-        }
+    TileGrid.select(async function(geometry) {
+        let poiID = await M.addPOI(geometry);
+        if(poiID > 0) MDraw.drawPolygon(geometry.points, poiID);
     });
 });
-//------------------------------------------------------------
-//Network mode change functions
-//------------------------------------------------------------
-$("[data-key=t-change-mode").on("click", function(ev) {
-    MUI.setMode($(this).attr("mode-val"));
-});
-
+//------------------------------------------------------------------------------
+//Tiled cached map
+//------------------------------------------------------------------------------
+let CachedMap = L.cachedmap();
+CachedMap.addTo(map);
 //------------------------------------------------------------
 //Leaflet specific functions and interractions
 //------------------------------------------------------------
@@ -125,7 +148,7 @@ $("[data-key=t-change-mode").on("click", function(ev) {
     //------------------------------------------------------------
     //Set function what will execute when maptorium init
     //------------------------------------------------------------
-    MUI.on("init", async function(mapsList, layersList) {
+    M.on("init", async function(mapsList, layersList) {
         //Prepare tile layers for maps
         for(let i = 0; i < mapsList.length; i++) {
             let mapInfo = mapsList[i];
@@ -146,34 +169,84 @@ $("[data-key=t-change-mode").on("click", function(ev) {
         //Prepare tile layers for overlays
         for(let i = 0; i < layersList.length; i++) {
             let mapInfo = layersList[i];
-            overlayLayers[mapInfo.id] = (
-                L.tileLayer(
-                    `tile?map=${mapInfo.id}&z={z}&x={x}&y={y}`, 
-                    {
-                    maxZoom: 20,
-                    attribution: mapInfo.attribution,
-                    tileSize: mapInfo.tileSize,
-                    zoomOffset: 0,
-                    type: mapInfo.type,
-                    mapID: mapInfo.id,
-                    }
+            if(mapInfo.format != "vector") {
+                overlayLayers[mapInfo.id] = (
+                    L.tileLayer(
+                        `tile?map=${mapInfo.id}&z={z}&x={x}&y={y}`, 
+                        {
+                        maxZoom: 20,
+                        attribution: mapInfo.attribution,
+                        tileSize: mapInfo.tileSize,
+                        zoomOffset: 0,
+                        type: mapInfo.type,
+                        mapID: mapInfo.id,
+                        }
+                    )
                 )
-            )
+            }
+            else {
+                overlayLayers[mapInfo.id] = L.mapboxGL({
+                    accessToken: 'P2DGn4fI4cVJ928SF14v',
+                    style: "leaflet/mapbox/bright.json",
+                    transformRequest: (url, resourceType) => {
+                    
+                      if(resourceType == "Tile") {
+                        //console.log(url);
+                        url = url.replace("https://api.maptiler.com/tiles/v3/", '');
+                        url = url.split("/");
+                        //console.log(url);
+                        url[2] = url[2].split(".");
+                        url[2] = url[2][0];
+                        url = `http://${window.location.hostname}:${window.location.port}/tile?map=${mapInfo.id}&z=${url[0]}&x=${url[1]}&y=${url[2]}`;
+                        //console.log(url);
+                        return {
+                          url: url,
+                          credentials: 'include'  // Include cookies for cross-origin requests
+                        };
+                      }
+                      else if(resourceType == "SpriteJSON") return {url: `leaflet/mapbox/sprite.json`}
+                      else if(resourceType == "SpriteImage") return {url: `leaflet/mapbox/sprite.png`}
+                      else if(resourceType == "Glyphs") return {url: `leaflet/mapbox/0-255.pbf`}
+                      else if(resourceType == "Style") return {url: url}
+                      else if(resourceType == "Source") return {url: "leaflet/mapbox/tiles.json"}
+                    else {
+                        console.log(resourceType, url);
+                        
+                      }
+                    }
+                });
+                // overlayLayers[mapInfo.id] = L.vectorGrid.protobuf(`tile?map=${mapInfo.id}&z={z}&x={x}&y={y}`, vectorHybridOverlayStyle)
+    			// .on('click', function(e) {	// The .on method attaches an event handler
+    			// 	L.popup()
+    			// 		.setContent(e.layer.properties.name || e.layer.properties.type)
+    			// 		.setLatLng(e.latlng)
+    			// 		.openOn(map);
+
+    			// 	L.DomEvent.stop(e);
+    			// });
+            }
+            
         }
         
-        setTimeout(() => $("#side-menu").metisMenu({toggle: true}), 1000);
+        setTimeout(() => {
+            $("#side-menu").metisMenu({toggle: true});
+            $(".veritical-menu").css("height", heightAdjust+"px");
+        }, 1000);
     });
     //------------------------------------------------------------
     //Center map event raised when default config received from server
     //or when Centered GPS position activated
     //------------------------------------------------------------
-    MUI.on("map.center", function(lat, lng, zoom) {
-        map.setView([lat, lng], zoom);
+    M.on("map.center", function(lat, lng, zoom) {
+        map.setView([lat, lng]);
+        if(zoom) {
+            map.setZoom(zoom);
+        }
     });
     //------------------------------------------------------------
     //Fire when need change main map
     //------------------------------------------------------------
-    MUI.on("map.change", function(mapID, currentMapID) {
+    M.on("map.change", function(mapID, currentMapID) {
         if(currentMapID) {
             mapsLayers[currentMapID].remove();
         }
@@ -183,55 +256,97 @@ $("[data-key=t-change-mode").on("click", function(ev) {
     //------------------------------------------------------------
     //Fire when need add overlay to map
     //------------------------------------------------------------
-    MUI.on("map.layerAdd", function(layerID) {
+    M.on("map.layerAdd", function(layerID) {
         overlayLayers[layerID].addTo(map);
         overlayLayers[layerID].bringToFront();
     });
     //------------------------------------------------------------
     //Fire when need remove overlay from map
     //------------------------------------------------------------
-    MUI.on("map.layerRemove", function(layerID) {
+    M.on("map.layerRemove", function(layerID) {
         overlayLayers[layerID].remove();
     });
     //------------------------------------------------------------
     //Fire when gps have new coords
     //------------------------------------------------------------
-    MUI.on("gps.update", function(lat, lon, dir) {
-        MDraw.moveMarker(lat, lon, dir);
+    M.on("gps.update", function(lat, lng, dir) {
+        MDraw.moveMarker(lat, lng, dir);
     });
     //------------------------------------------------------------
     //Fire when route insert new point
     //------------------------------------------------------------
-    MUI.on("route.point", function(lat, lon) {
-        MDraw.routePoint(lat, lon);
+    M.on("route.point", function(lat, lng) {
+        MDraw.routePoint(lat, lng);
     });
     //------------------------------------------------------------
     //Fire when need to hide current route
     //------------------------------------------------------------
-    MUI.on("route.hide", function() {
+    M.on("route.hide", function() {
         MDraw.hideRoute();
     });
     //------------------------------------------------------------
     //Fire when need to show current route
     //------------------------------------------------------------
-    MUI.on("route.show", function(points) {
+    M.on("route.show", function(points) {
         MDraw.drawRoute(points);
     });
     //------------------------------------------------------------
     //Fire when need to hide history routes
     //------------------------------------------------------------
-    MUI.on("history.hide", function() {
+    M.on("history.hide", function() {
         MDraw.hideHistory();
     });
     //------------------------------------------------------------
     //Fire when need to show history route
     //------------------------------------------------------------
-    MUI.on("history.show", function(points) {
-        console.log("History show");
-        MDraw.drawPolyline(points);
+    M.on("history.show", function(ID, points) {
+        MDraw.drawPolyline(points, ID);
+    });
+    //------------------------------------------------------------
+    //Fire when need to show history route
+    //------------------------------------------------------------
+    M.on("history.point", function(ID, lat, lng) {
+        MDraw.pointPolyline(ID, lat, lng);
+    });
+    //------------------------------------------------------------
+    //Fire when need to draw polygon
+    //------------------------------------------------------------
+    M.on("add.polygon", function(points, ID, options) {
+        MDraw.drawPolygon(points, ID, options);
+    });
+    //------------------------------------------------------------
+    //Fire when need to draw polyline
+    //------------------------------------------------------------
+    M.on("add.polyline", function(points, ID, config) {
+        MDraw.drawPolyline(points, ID, config);
+    });
+    //------------------------------------------------------------
+    //Fire when need to draw point
+    //------------------------------------------------------------
+    M.on("add.point", function(info) {
+        MDraw.drawPoint(info);
+    });
+    //------------------------------------------------------------
+    //Fire when new cached Map arrive
+    //------------------------------------------------------------
+    M.on("cachedtile.map", function(mapInfo) {
+        CachedMap.setData(mapInfo);
+        CachedMap.bringToFront();
+    });
+    //------------------------------------------------------------
+    //Fire when tile in cache map change state
+    //------------------------------------------------------------
+    M.on("cachedtile.tile", function(tileInfo) {
+        CachedMap.updateTile(tileInfo);
+    });
+    //------------------------------------------------------------
+    //Fire when cached map clean button was presed
+    //------------------------------------------------------------
+    M.on("cachedtile.clean", function() {
+        CachedMap.setData(null);
     });
     //------------------------------------------------------------
     //Init new Maptorium UI after all preparations. Must call last
     //------------------------------------------------------------
-    await MUI.init();
+    await M.init();
 })();

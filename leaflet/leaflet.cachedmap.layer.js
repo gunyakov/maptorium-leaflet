@@ -17,7 +17,7 @@ L.CachedMap = L.GridLayer.extend({
   createTile: function (coords) {
     if(this._curZoom != coords.z) {
       this._curZoom = coords.z;
-      console.log("Reset tiles list");
+      //console.log("Reset tiles list");
       this._tilesList = {};
     }
     // create a <canvas> element for drawing
@@ -63,7 +63,7 @@ L.CachedMap = L.GridLayer.extend({
     return tile;
   },
   setData: function(cachedMap) {
-    console.log("set cached map", cachedMap);
+    //console.log("set cached map", cachedMap);
     this._cachedMap = cachedMap;
     this.redraw();
   },
