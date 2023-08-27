@@ -1,6 +1,6 @@
 {
   "name": "maptorium-leaflet",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Maptorium Frontend - Frontend with Leaflet for Maptorium project",
   "main": "index.js",
   "scripts": {

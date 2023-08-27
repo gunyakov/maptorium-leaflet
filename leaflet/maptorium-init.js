@@ -209,9 +209,8 @@ CachedMap.addTo(map);
                       else if(resourceType == "Glyphs") return {url: `leaflet/mapbox/0-255.pbf`}
                       else if(resourceType == "Style") return {url: url}
                       else if(resourceType == "Source") return {url: "leaflet/mapbox/tiles.json"}
-                    else {
-                        console.log(resourceType, url);
-                        
+                      else {
+                       console.log(resourceType, url);   
                       }
                     }
                 });
